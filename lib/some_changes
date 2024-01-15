@@ -1,0 +1,58 @@
+Future<List<Map<String, dynamic>>> getFavoritesWithDetails() async {
+  return await _database.rawQuery(
+    'SELECT favorites.id, favorites.product_id, products.title, products.description ' +
+    'FROM favorites ' +
+    'JOIN products ON favorites.product_id = products.id'
+  );
+}
+
+
+
+
+Future<Map<String, dynamic>> isFavorite() async {
+  await databaseHelper.open();
+  List<Map<String, dynamic>> favorites = await databaseHelper.getFavoritesWithDetails();
+
+  String productId = widget.myProduct['id']!;
+
+  // Check if the current product is in the favorites list
+  Map<String, dynamic>? favoriteProduct = favorites.firstWhere(
+    (favorite) => favorite['product_id'] == productId,
+    orElse: () => null,
+  );
+
+  return favoriteProduct ?? {'isFavorite': false};
+}
+
+
+
+FutureBuilder<Map<String, dynamic>>(
+  future: isFavorite(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Icon(Icons.favorite_border, color: Colors.red);
+    } else {
+      bool isFav = snapshot.data?['isFavorite'] ?? false;
+      String title = snapshot.data?['title'] ?? widget.myProduct["title"]!;
+      String description = snapshot.data?['description'] ?? widget.myProduct["description"]!;
+
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container(
+            // ... rest of the code
+          ),
+          Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(description, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ],
+      );
+    }
+  },
+),
+
+
+
+
+
