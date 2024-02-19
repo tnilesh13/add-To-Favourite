@@ -1,5 +1,6 @@
 import 'package:database_practice/database_helper.dart';
 import 'package:database_practice/favourite_screen.dart';
+import 'package:database_practice/insta_feed.dart';
 import 'package:database_practice/product_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -39,38 +40,40 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductScreen(),
-                      ));
-                },
-                child: Text("Products")),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FavouriteScreen(),
-                      ));
-                },
-                child: Text("Favourites")),
-            ElevatedButton(
-                onPressed: () {
-                  // DatabaseHelper databaseHelper = DatabaseHelper();
-                  // databaseHelper.open();
-                  // databaseHelper.deleteAllFavorites();
-                  deleteAllFavorites();
-                },
-                child: Text("delete all Favourites")),
-          ],
-        ),
-      ),
+      body:InstagramFeed()
+      //  Center(
+      //   child: Column(
+      //     children: [
+      //       ElevatedButton(
+      //           onPressed: () {
+      //             Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(
+      //                   builder: (context) => ProductScreen(),
+      //                 ));
+      //           },
+      //           child: Text("Products")),
+      //       ElevatedButton(
+      //           onPressed: () {
+      //             Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(
+      //                   builder: (context) => FavouriteScreen(),
+      //                 ));
+      //           },
+      //           child: Text("Favourites")),
+      //       ElevatedButton(
+      //           onPressed: () {
+      //             // DatabaseHelper databaseHelper = DatabaseHelper();
+      //             // databaseHelper.open();
+      //             // databaseHelper.deleteAllFavorites();
+      //             deleteAllFavorites();
+      //           },
+      //           child: Text("delete all Favourites")),
+      //     ],
+      //   ),
+      // ),
+    
     );
   }
   

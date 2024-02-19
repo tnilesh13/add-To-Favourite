@@ -1,42 +1,42 @@
-import 'package:database_practice/bloc/favorite_state.dart';
-import 'package:database_practice/database_helper.dart';
+// import 'package:database_practice/bloc/favorite_state.dart';
+// import 'package:database_practice/database_helper.dart';
 
 
-class ProductBloc extends Cubit<ProductState> {
-  final DatabaseHelper databaseHelper = DatabaseHelper();
+// class ProductBloc extends Cubit<ProductState> {
+//   final DatabaseHelper databaseHelper = DatabaseHelper();
 
-  ProductBloc() : super(ProductState(isFavorite: false, title: '', description: ''));
+//   ProductBloc() : super(ProductState(isFavorite: false, title: '', description: ''));
 
-  Future<void> loadFavorites() async {
-    await databaseHelper.open();
-    List<Map<String, dynamic>> favorites = await databaseHelper.getFavoritesWithDetails();
+//   Future<void> loadFavorites() async {
+//     await databaseHelper.open();
+//     List<Map<String, dynamic>> favorites = await databaseHelper.getFavoritesWithDetails();
 
-    String productId = widget.myProduct['id']!;
+//     String productId = widget.myProduct['id']!;
 
-    Map<String, dynamic>? favoriteProduct = favorites.firstWhere(
-      (favorite) => favorite['product_id'] == productId,
-      orElse: () => null,
-    );
+//     Map<String, dynamic>? favoriteProduct = favorites.firstWhere(
+//       (favorite) => favorite['product_id'] == productId,
+//       orElse: () => null,
+//     );
 
-    emit(ProductState(
-      isFavorite: favoriteProduct != null,
-      title: favoriteProduct?['title'] ?? widget.myProduct["title"]!,
-      description: favoriteProduct?['description'] ?? widget.myProduct["description"]!,
-    ));
-  }
+//     emit(ProductState(
+//       isFavorite: favoriteProduct != null,
+//       title: favoriteProduct?['title'] ?? widget.myProduct["title"]!,
+//       description: favoriteProduct?['description'] ?? widget.myProduct["description"]!,
+//     ));
+//   }
 
-  Future<void> toggleFavorite() async {
-    ProductState currentState = state;
-    bool isFav = !currentState.isFavorite;
+//   Future<void> toggleFavorite() async {
+//     ProductState currentState = state;
+//     bool isFav = !currentState.isFavorite;
 
-    await databaseHelper.open();
+//     await databaseHelper.open();
 
-    if (isFav) {
-      await databaseHelper.deleteFavoriteByProductId(widget.myProduct['id']!);
-    } else {
-      await databaseHelper.insertFavorite(widget.myProduct['id']!);
-    }
+//     if (isFav) {
+//       await databaseHelper.deleteFavoriteByProductId(widget.myProduct['id']!);
+//     } else {
+//       await databaseHelper.insertFavorite(widget.myProduct['id']!);
+//     }
 
-    loadFavorites();
-  }
-}
+//     loadFavorites();
+//   }
+// }
