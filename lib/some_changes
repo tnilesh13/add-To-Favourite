@@ -1,58 +1,146 @@
-Future<List<Map<String, dynamic>>> getFavoritesWithDetails() async {
-  return await _database.rawQuery(
-    'SELECT favorites.id, favorites.product_id, products.title, products.description ' +
-    'FROM favorites ' +
-    'JOIN products ON favorites.product_id = products.id'
-  );
+/*
+MY PROMPT 
+
+i am building a platform where user can build an app using drag and drop on website and when they click build button on website than a project gets created on my firebase account for the  user and their apk file get's build using shelll script commands but now i want to create the user project on their own firebase account and not on mine.
+
+*/
+
+
+
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
+void main() {
+  runApp(MyApp());
 }
 
-
-
-
-Future<Map<String, dynamic>> isFavorite() async {
-  await databaseHelper.open();
-  List<Map<String, dynamic>> favorites = await databaseHelper.getFavoritesWithDetails();
-
-  String productId = widget.myProduct['id']!;
-
-  // Check if the current product is in the favorites list
-  Map<String, dynamic>? favoriteProduct = favorites.firstWhere(
-    (favorite) => favorite['product_id'] == productId,
-    orElse: () => null,
-  );
-
-  return favoriteProduct ?? {'isFavorite': false};
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: SignInScreen(),
+    );
+  }
 }
 
+class SignInScreen extends StatefulWidget {
+  @override
+  _SignInScreenState createState() => _SignInScreenState();
+}
 
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-FutureBuilder<Map<String, dynamic>>(
-  future: isFavorite(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
-    } else if (snapshot.hasError) {
-      return Icon(Icons.favorite_border, color: Colors.red);
-    } else {
-      bool isFav = snapshot.data?['isFavorite'] ?? false;
-      String title = snapshot.data?['title'] ?? widget.myProduct["title"]!;
-      String description = snapshot.data?['description'] ?? widget.myProduct["description"]!;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sign In'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                signIn(_emailController.text, _passwordController.text);
+              },
+              child: Text('Sign In'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Container(
-            // ... rest of the code
-          ),
-          Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          Text(description, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        ],
+  Future<void> signIn(String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
+      print('User signed in: ${userCredential.user!.uid}');
+      // Navigate to the next screen upon successful sign-in
+    } catch (e) {
+      print("Failed to sign in: $e");
+      // Show error message to the user
     }
-  },
-),
+  }
+}
 
 
 
 
 
+
+
+
+
+
+
+
+// Step 2: Project Creation
+// You can call the function createProjectInUserAccount whenever necessary, typically after successful user authentication.
+
+
+import 'package:http/http.dart' as http;
+
+Future<void> createProjectInUserAccount(String userId) async {
+  final response = await http.post(
+    Uri.parse('YOUR_NODE_BACKEND_URL/createProject'),
+    body: {'userId': userId},
+  );
+
+  if (response.statusCode == 200) {
+    print('Project created successfully');
+  } else {
+    print('Failed to create project: ${response.body}');
+  }
+}
+
+
+
+
+
+
+// server.js
+
+const express = require('express');
+const app = express();
+const PORT = 5000;
+
+app.use(express.json());
+
+app.post('/api/signin', (req, res) => {
+  const { email, password } = req.body;
+  // Authenticate user with email and password
+  // Your authentication logic here
+  if (authenticated) {
+    res.status(200).send('User signed in successfully');
+  } else {
+    res.status(401).send('Authentication failed');
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
